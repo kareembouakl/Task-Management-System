@@ -10,6 +10,7 @@ import ContentCut from '@mui/icons-material/ContentCut';
 import ContentCopy from '@mui/icons-material/ContentCopy';
 import ContentPaste from '@mui/icons-material/ContentPaste';
 import Cloud from '@mui/icons-material/Cloud';
+import { Link } from 'react-router-dom';
 
 
 
@@ -25,10 +26,11 @@ const Nav = () => {
     <div>
         <AppBar sx={{ backgroundColor: 'blue' }} position="static">
         <Toolbar>
-          
+          <Link style={{textDecoration: 'none', color:'white'}} to='/'>
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             Task Manager
           </Typography>
+          </Link>
           <div>
             <IconButton
               size="large"
@@ -57,7 +59,7 @@ const Nav = () => {
             </Menu>
           </div>
 
-          <Box sx={{width:'200px',display:'flex',flexDirection:'row',justifyContent:'space-around'}}>
+          <Box sx={{width:'200px',display:'flex',flexDirection:'row',justifyContent:'space-around',pr:'0'}}>
             <Button sx={{backgroundColor:'whitesmoke',color:'black'}}>Register</Button>
             <Button sx={{backgroundColor:'whitesmoke',color:'black'}}>Login</Button>
 
