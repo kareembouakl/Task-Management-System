@@ -1,29 +1,37 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Nav from './Nav';
 import { Box, Button, Grid, TextField, Typography } from '@mui/material';
+import { getUserToken, saveUserToken, clearUserToken } from "../localStorage";
+
+const SERVER_URL = "http://127.0.0.1:5000";
 
 function AddTaskForm() {
+  const [employees, setEmployees] = useState([]);
+  const [employeeNames, setEmployeeNames] = useState([]);
+  const [selectedEmployee, setSelectedEmployee] = useState('');
 
     const [formData, setFormData] = useState({
         name:'',
         deadline: '',
         commit: '',
         percentage:'',
+        employee:'',
       });
 
       const addTask =() =>{
         
-        fetch(`http://127.0.0.1:5000/employee/${formData['empID']}/task`, {
+        fetch(`http://127.0.0.1:5000/employee/${selectedEmployee['id']}/task`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
               
             },
             body: JSON.stringify({
-              name: formData['name'],
+              task: formData['name'],
               deadline: formData['deadline'],
               commit: formData['commit'],
               percentage: formData['percentage'],
+              employee: formData['employee'],
               // Add other fields as needed
             }),
           })
@@ -50,7 +58,49 @@ function AddTaskForm() {
           ...prevFormData,
           [name]: value,
         }));
+        
+        employees.forEach( (e) => { if (e["employee_name"] === formData['employee']) {setSelectedEmployee(e);} } );
+        console.log("here");
+        console.log(selectedEmployee);
       };
+
+
+      
+    const fetchEmployees = useCallback(() => {
+      fetch(`${SERVER_URL}/employee`, {
+          headers: {
+              Authorization: `bearer ${getUserToken()}`,
+          },
+      })
+          .then((response) => response.json())
+          .then((e) => setEmployees(e));
+  }, [getUserToken()]);
+  useEffect(() => {
+      const getEmployees = async () => {
+          try {
+              if (getUserToken()) {
+                  await fetchEmployees();
+              }
+          } catch (error) {
+              console.error("Failed to fetch employees:", error);
+          }
+      };
+
+      getEmployees();
+  }, [fetchEmployees, getUserToken()]);
+
+
+
+  useEffect(() => {
+      if (getUserToken()) {
+          fetchEmployees();
+      }
+  }, [fetchEmployees]);
+
+  useEffect(() => {
+      const eN = employees.map(e => e["employee_name"]);
+      setEmployeeNames(eN);
+  }, [employees]);
     
 
 
@@ -100,6 +150,16 @@ function AddTaskForm() {
               label="Percentage"
               name="percentage"
               value={formData.percentage}
+              onChange={handleChange}
+            />
+            </Box>
+
+            <Box sx={{height:'100px',display:'flex',flexDirection:'column',justifyContent:'space-around'}}>
+            <TextField
+              fullWidth
+              label="Employee"
+              name="employee"
+              value={formData.employee}
               onChange={handleChange}
             />
             </Box>

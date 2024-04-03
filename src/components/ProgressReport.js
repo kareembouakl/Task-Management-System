@@ -12,27 +12,14 @@ function ProgressReport() {
     const [employees, setEmployees] = useState([]);
     const [employeeNames, setEmployeeNames] = useState([]);
     const [selectedEmployee, setSelectedEmployee] = useState('');
+    const [tasks, setTasks] = useState([]);
 
-    //const employeeNames = () => { forEach (e in employees) {employeeNames.push(e["name"]); } }; //EXTRACT NAMES
-    
-    //const employeeNames = employees.forEach( (e) => {employeeNames.push(e["employee_name"]); console.log(e["employee_name"]);});
-
-    useEffect(()=>{
-        fetchEmployees();
-        console.log(employees[0]);
-
-        // setEmployeeNames( employees.forEach( (e) => {employeeNames.push(e["employee_name"]); console.log(e["employee_name"]);}); );
-        //setEmployeeNames(employees.map(e => e["employee_name"]));
-        const eN = [];
-        employees.forEach( (e) => {eN.push(e["employee_name"]); });
-        setEmployeeNames(eN);
-
-        console.log(employeeNames);
-        fetchEmployees();
-    },[])
 
     const handleChangeEmp = (event) => {
-        setSelectedEmployee(event.target.value);
+        fetchEmployees();
+        const name = event.target.value;
+        employees.forEach( (e) => { if (e["employee_name"] == name) {setSelectedEmployee(e);} } );
+        fetchEmployeeTasks();
     };
 
     const fetchEmployees = useCallback(() => {
@@ -57,10 +44,30 @@ function ProgressReport() {
 
         getEmployees();
     }, [fetchEmployees, getUserToken()]);
+
+    const fetchEmployeeTasks = useCallback(() => {
+        fetch(`${SERVER_URL}/employee/${selectedEmployee["id"]}/task`, {
+            method: 'GET',
+            headers: {
+                Authorization: `bearer ${getUserToken()}`,
+            },
+        })
+            .then((response) => response.json())
+            .then((tasks) => setTasks(tasks));
+    }, [getUserToken()]);
+
+
+
     useEffect(() => {
-        fetchEmployees(); 
+        if (getUserToken()) {
+            fetchEmployees();
+        }
     }, [fetchEmployees]);
 
+    useEffect(() => {
+        const eN = employees.map(e => e["employee_name"]);
+        setEmployeeNames(eN);
+    }, [employees]);
 
   return (
     <div>
@@ -73,7 +80,7 @@ function ProgressReport() {
             <Select
                 labelId="select-employee-label"
                 id="select-employee"
-                value={selectedEmployee}
+                value={selectedEmployee["employee_name"]}
                 label="Select an employee"
                 onChange={handleChangeEmp}
                 
@@ -87,19 +94,23 @@ function ProgressReport() {
         <Typography variant="h4" gutterBottom>
             Employee Progress Report
         </Typography>
-        <Typography variant="body1"><strong>Date of Birth:</strong> { /* DOB */ }</Typography>
-        <Typography variant="body1"><strong>Task:</strong> { /* TASK(S?) */ }</Typography>
-        <Typography variant="body1"><strong>Progress:</strong> { /* PROGRESS */ }%</Typography>
-        {/* <Box>
+        <Typography variant="body1"><strong>Phone Number:</strong> { selectedEmployee["employee_phone"] }</Typography>
+        <Box>
             <Typography variant="h5">Tasks:</Typography>
             <List>
-            {employee.tasks.map((task, index) => (
-                <ListItem key={index} divider>
-                <ListItemText primary={task.name} secondary={`Status: ${task.status}`} />
-                </ListItem>
+            {tasks.map((task, index) => (
+                <Box sx={{display:'flex',flexDirection:'column'}}>
+                    {/* <ListItemText primary={task["task_name"]} secondary={`Progress: ${task["task_percentage"]}`}     
+                     /> */}
+                    <Typography variant="h6">Task: {task["task_name"]}</Typography>
+                    <Typography variant="h7">Last commit: {task["task_commit"]}</Typography>
+                    <Typography variant="h7">Progress: {task["task_percentage"]}</Typography>
+                    <Typography variant="h7">Deadline: {task["task_deadline"]}</Typography>
+                </Box>
+                
             ))}
             </List>
-        </Box> */}
+        </Box>
     </div>
   )
 }
