@@ -2,32 +2,32 @@
 import React, { useState } from 'react';
 import Nav from './Nav';
 import { Box, Button, Grid, TextField, Typography } from '@mui/material';
+import {getUserToken} from '../localStorage'
 
 function AddEmployeeForm() {
 
     const [formData, setFormData] = useState({
-        id:'',
         name: '',
         address: '',
         phoneNumber:'',
-        department:'',
-        managerID:''
+        department:''
       });
 
       const addEmployee =() =>{
         
-        fetch('https:localhost:5000/employee', {
+        fetch('http://127.0.0.1:5000/employee', {
             method: 'POST',
             headers: {
-              'Content-Type': 'application/json',
+              Authorization: `Bearer ${getUserToken()}`,
+              'Content-Type': 'application/json'
               
             },
             body: JSON.stringify({
               name: formData['name'],
               phone: formData['phoneNumber'],
               address: formData['address'],
-              department: formData['department'],
-              // Add other fields as needed
+              department: formData['department']
+
             }),
           })
           .then(response => {
@@ -48,11 +48,13 @@ function AddEmployeeForm() {
       }
     
       const handleChange = (e) => {
+        console.log(formData);
         const { name, value } = e.target;
         setFormData((prevFormData) => ({
           ...prevFormData,
           [name]: value,
         }));
+        console.log(formData);
       };
     
 
@@ -63,15 +65,7 @@ function AddEmployeeForm() {
       <Box sx={{width:'800px',height:'1000px',display:'flex',flexDirection:'column',justifyContent:'center',alignItems:'center'}}>
         <Typography>Add Employee</Typography>
       <form style={{height:'700px',width:'600px',display:'flex',flexDirection:'column',justifyContent:'space-around',padding:'20px',border:'2px solid black',borderRadius:'10px'}}  onSubmit={addEmployee}>
-            <Box sx={{height:'100px',display:'flex',flexDirection:'column',justifyContent:'space-around'}}>
-            <TextField
-              fullWidth
-              label="Employee ID"
-              name="id"
-              value={formData.id}
-              onChange={handleChange}
-            />
-            </Box>
+     
 
             <Box sx={{height:'100px',display:'flex',flexDirection:'column',justifyContent:'space-around'}}>
 
@@ -110,16 +104,6 @@ function AddEmployeeForm() {
               label="Department"
               name="department"
               value={formData.department}
-              onChange={handleChange}
-            />
-            </Box>
-
-            <Box sx={{height:'100px',display:'flex',flexDirection:'column',justifyContent:'space-around'}}>
-            <TextField
-              fullWidth
-              label="Manager ID"
-              name="managerID"
-              value={formData.managerID}
               onChange={handleChange}
             />
             </Box>

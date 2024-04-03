@@ -5,7 +5,6 @@ import { Box, Button, Grid, TextField, Typography } from '@mui/material';
 function AddTaskForm() {
 
     const [formData, setFormData] = useState({
-        empID:'',
         name:'',
         deadline: '',
         commit: '',
@@ -14,7 +13,7 @@ function AddTaskForm() {
 
       const addTask =() =>{
         
-        fetch(`https:localhost:5000/employee/${formData['empID']}/task`, {
+        fetch(`http://127.0.0.1:5000/employee/${formData['empID']}/task`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -63,16 +62,6 @@ function AddTaskForm() {
         <Typography>Add Task</Typography>
       <form style={{height:'700px',width:'600px',display:'flex',flexDirection:'column',justifyContent:'space-around',padding:'20px',border:'2px solid black',borderRadius:'10px'}}  onSubmit={addTask}>
             
-            <Box sx={{height:'100px',display:'flex',flexDirection:'column',justifyContent:'space-around'}}>
-
-                <TextField
-                fullWidth
-                label="Employee ID"
-                name="id"
-                value={formData.deadline}
-                onChange={handleChange}
-                />
-            </Box>
             
             <Box sx={{height:'100px',display:'flex',flexDirection:'column',justifyContent:'space-around'}}>
             <TextField
