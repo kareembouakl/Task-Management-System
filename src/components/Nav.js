@@ -39,7 +39,7 @@ const Nav = () => {
               "Content-Type": "application/json",
           },
           body: JSON.stringify({
-              user_name: username,
+            manager_name: username,
               password: password,
           }),
       })
@@ -52,17 +52,17 @@ const Nav = () => {
       );
     }
 
-    function createUser(username, password) {
-      return fetch(`${SERVER_URL}/user`, {
+    function createUser(manager_name, password) {
+      return fetch(`${SERVER_URL}/manager`, {
           method: "POST",
           headers: {
               "Content-Type": "application/json",
           },
           body: JSON.stringify({
-          user_name: username,
+          manager_name: manager_name,
           password: password,
           }),
-          }).then((response) => login(username, password));
+          }).then((response) => login(manager_name, password));
     }
 
     function logout() {

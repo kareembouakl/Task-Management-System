@@ -1,23 +1,30 @@
 import React, { useState, useEffect, useCallback } from 'react'
-import { Typography, Paper, List, ListItem, ListItemText, Box, MenuItem, InputLabel, Select } from '@mui/material';
+import { Typography, Paper, List, ListItem, ListItemText, Box, MenuItem, InputLabel, Select, Table, TableCell, TableHead, TableRow, TableBody } from '@mui/material';
 
 import { getUserToken } from '../localStorage';
 import Nav from './Nav';
-import SERVER_URL from '../App'
+// import SERVER_URL from '../App'
+const SERVER_URL = "http://127.0.0.1:5000";
+
 
 
 function ProgressReport() {
     const [employees, setEmployees] = useState([]);
+    const [employeeNames, setEmployeeNames] = useState([]);
     const [selectedEmployee, setSelectedEmployee] = useState('');
+    const [tasks, setTasks] = useState([]);
 
-    const employeeNames = ["Eric Njeim","Kareem Bou Akl","Yehya"]; //EXTRACT NAMES
 
     const handleChangeEmp = (event) => {
-        setSelectedEmployee(event.target.value);
+        fetchEmployees();
+        const name = event.target.value;
+        employees.forEach( (e) => { if (e["employee_name"] == name) {setSelectedEmployee(e);} } );
+        fetchEmployeeTasks();
     };
 
+
     const fetchEmployees = useCallback(() => {
-        fetch(`${SERVER_URL}/transaction`, {
+        fetch(`${SERVER_URL}/employees`, {
             headers: {
                 Authorization: `bearer ${getUserToken()}`,
             },
@@ -32,29 +39,50 @@ function ProgressReport() {
                     await fetchEmployees();
                 }
             } catch (error) {
-                console.error("Failed to fetch user transactions:", error);
+                console.error("Failed to fetch employees:", error);
             }
         };
 
         getEmployees();
     }, [fetchEmployees, getUserToken()]);
+
+    const fetchEmployeeTasks = useCallback(() => {
+        fetch(`${SERVER_URL}/employees/${selectedEmployee["id"]}/task`, {
+            method: 'GET',
+            headers: {
+                Authorization: `bearer ${getUserToken()}`,
+            },
+        })
+            .then((response) => response.json())
+            .then((tasks) => setTasks(tasks));
+    }, [getUserToken()]);
+
+
+
     useEffect(() => {
-        fetchEmployees(); 
+        if (getUserToken()) {
+            fetchEmployees();
+        }
     }, [fetchEmployees]);
 
+    useEffect(() => {
+        const eN = employees.map(e => e["employee_name"]);
+        setEmployeeNames(eN);
+    }, [employees]);
 
   return (
     <div>
         <Nav />
-        <div>
+       
+        <Box sx={{height:'200px',marginLeft:'2%'}}> 
             <InputLabel 
                 id="select-employee-label"
-                sx={{ fontSize: 24 }}
+                sx={{ fontSize: 24, height:'100px', display:'flex',flexDirection:'column',justifyContent:'center' }}
                 >Select an employee</InputLabel>
             <Select
                 labelId="select-employee-label"
                 id="select-employee"
-                value={selectedEmployee}
+                value={selectedEmployee["employee_name"]}
                 label="Select an employee"
                 onChange={handleChangeEmp}
                 
@@ -64,24 +92,36 @@ function ProgressReport() {
                     <MenuItem key={index} value={e}>{e}</MenuItem>
                 ))}
             </Select>
-        </div>
-        <Typography variant="h4" gutterBottom>
+           
+   
+        <Typography variant="h4" gutterBottom sx={{paddingTop:'2%'}}>
             Employee Progress Report
         </Typography>
-        <Typography variant="body1"><strong>Date of Birth:</strong> { /* DOB */ }</Typography>
-        <Typography variant="body1"><strong>Task:</strong> { /* TASK(S?) */ }</Typography>
-        <Typography variant="body1"><strong>Progress:</strong> { /* PROGRESS */ }%</Typography>
-        {/* <Box>
-            <Typography variant="h5">Tasks:</Typography>
-            <List>
-            {employee.tasks.map((task, index) => (
-                <ListItem key={index} divider>
-                <ListItemText primary={task.name} secondary={`Status: ${task.status}`} />
-                </ListItem>
-            ))}
-            </List>
-        </Box> */}
+
+        <Table  aria-label="simple table">
+        <TableHead>
+          <TableRow>
+            <TableCell>Task</TableCell>
+            <TableCell align="right">Last Commit</TableCell>
+            <TableCell align="right">Progress</TableCell>
+            <TableCell align="right">Deadline</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+         
+            <TableRow key={tasks["task_name"]}>
+
+              <TableCell align="right">{tasks["task_name"]}</TableCell>
+              <TableCell align="right">{tasks["task_commit"]}</TableCell>
+              <TableCell align="right">{tasks["task_percentage"]}</TableCell>
+              <TableCell align="right">{tasks["task_deadline"]}</TableCell>
+            </TableRow>
+      
+        </TableBody>
+      </Table>
+      </Box>
     </div>
+  
   )
 }
 

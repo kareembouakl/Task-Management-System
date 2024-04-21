@@ -1,0 +1,1 @@
+DB_CONFIG = 'mysql+pymysql://root:Kareem430@localhost:3306/exchange'

@@ -1,129 +1,85 @@
 import React, { useState } from 'react';
 import Nav from './Nav';
-import { Box, Button, Grid, TextField, Typography } from '@mui/material';
+import { Box, Button, TextField, Typography, Alert } from '@mui/material';
+import { getUserToken } from "../localStorage";
+
+const SERVER_URL = "http://127.0.0.1:5000";
 
 function AddTaskForm() {
-
     const [formData, setFormData] = useState({
-        empID:'',
-        name:'',
-        deadline: '',
-        commit: '',
-        percentage:'',
-      });
+        title: '',
+        skills_required: ''
+    });
+    const [errors, setErrors] = useState([]);
 
-      const addTask =() =>{
+    const addTask = (event) => {
+        event.preventDefault();
+        if (!validateForm()) return;
+
+        const skillsArray = formData.skills_required.split(',').map(skill => skill.trim());
         
-        fetch(`https:localhost:5000/employee/${formData['empID']}/task`, {
+        fetch(`${SERVER_URL}/tasks`, {
             method: 'POST',
             headers: {
-              'Content-Type': 'application/json',
-              
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${getUserToken()}`
             },
             body: JSON.stringify({
-              name: formData['name'],
-              deadline: formData['deadline'],
-              commit: formData['commit'],
-              percentage: formData['percentage'],
-              // Add other fields as needed
+                title: formData.title,
+                skills_required: skillsArray
             }),
-          })
-          .then(response => {
+        })
+        .then(response => {
             if (!response.ok) {
-              throw new Error('Network response was not ok');
+                throw new Error('Network response was not ok');
             }
             return response.json();
-          })
-          .then(data => {
-            // Handle successful response
+        })
+        .then(data => {
             console.log(data);
-          })
-          .catch(error => {
-            // Handle error
+            setFormData({ title: '', skills_required: '' }); // Reset form on successful addition
+            setErrors([]);
+        })
+        .catch(error => {
             console.error('There was a problem with your fetch operation:', error);
-          });
-          
-      }
-    
-      const handleChange = (e) => {
+            setErrors([error.message]);
+        });
+    };
+
+    const validateForm = () => {
+        let errorMessages = [];
+        if (!formData.title.trim()) errorMessages.push("Title is required.");
+        if (!formData.skills_required.trim()) errorMessages.push("Skills are required.");
+        setErrors(errorMessages);
+        return errorMessages.length === 0;
+    };
+
+    const handleChange = (e) => {
         const { name, value } = e.target;
-        setFormData((prevFormData) => ({
-          ...prevFormData,
-          [name]: value,
+        setFormData(prevFormData => ({
+            ...prevFormData,
+            [name]: value,
         }));
-      };
-    
+    };
 
-
-
-  return(
-    <div>
-      <Nav/>
-      <Box sx={{width:'800px',height:'1000px',display:'flex',flexDirection:'column',justifyContent:'center',alignItems:'center'}}>
-        <Typography>Add Task</Typography>
-      <form style={{height:'700px',width:'600px',display:'flex',flexDirection:'column',justifyContent:'space-around',padding:'20px',border:'2px solid black',borderRadius:'10px'}}  onSubmit={addTask}>
-            
-            <Box sx={{height:'100px',display:'flex',flexDirection:'column',justifyContent:'space-around'}}>
-
-                <TextField
-                fullWidth
-                label="Employee ID"
-                name="id"
-                value={formData.deadline}
-                onChange={handleChange}
-                />
+    return (
+        <div>
+            <Nav/>
+            <Box sx={{ width: '800px', height: '1000px', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+                <Typography variant="h6">Add Task</Typography>
+                {errors.map((error, index) => (
+                    <Alert key={index} severity="error">{error}</Alert>
+                ))}
+                <form onSubmit={addTask} style={{ height: '500px', width: '600px', display: 'flex', flexDirection: 'column', justifyContent: 'space-around', padding: '20px', border: '2px solid black', borderRadius: '10px' }}>
+                    <TextField fullWidth label="Title" name="title" value={formData.title} onChange={handleChange} />
+                    <TextField fullWidth label="Skills Required (comma-separated)" name="skills_required" value={formData.skills_required} onChange={handleChange} />
+                    <Button style={{ width: '80px', padding: '8px' }} variant="contained" color="primary" type="submit">
+                        Submit
+                    </Button>
+                </form>
             </Box>
-            
-            <Box sx={{height:'100px',display:'flex',flexDirection:'column',justifyContent:'space-around'}}>
-            <TextField
-              fullWidth
-              label="Name"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-            />
-            </Box>
-
-            <Box sx={{height:'100px',display:'flex',flexDirection:'column',justifyContent:'space-around'}}>
-
-            <TextField
-              fullWidth
-              label="Deadline"
-              name="deadline"
-              value={formData.deadline}
-              onChange={handleChange}
-            />
-            </Box>
-        
-            <Box sx={{height:'100px',display:'flex',flexDirection:'column',justifyContent:'space-around'}}>
-            <TextField
-              fullWidth
-              label="Commit"
-              name="commit"
-              value={formData.commit}
-              onChange={handleChange}
-            />
-            </Box>
-
-            <Box sx={{height:'100px',display:'flex',flexDirection:'column',justifyContent:'space-around'}}>
-            <TextField
-              fullWidth
-              label="Percentage"
-              name="percentage"
-              value={formData.percentage}
-              onChange={handleChange}
-            />
-            </Box>
-
-         
-            <Button style={{width:'80px',padding:'8px'}} variant="contained" color="primary" type="submit">
-              Submit
-            </Button>
-
-      </form>
-      </Box>
-    </div>
-  );
+        </div>
+    );
 }
 
 export default AddTaskForm;

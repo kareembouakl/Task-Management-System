@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from "react";
-import { Typography, Select, MenuItem, InputLabel } from '@mui/material';
+import { Typography, Select, MenuItem, InputLabel, Table, TableCell, TableHead, TableRow, TableBody } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 import { getUserToken, saveUserToken, clearUserToken } from "../localStorage";
 
@@ -20,7 +20,7 @@ function TaskTable() {
     };
 
     const fetchEmployeeTasks = useCallback(() => {
-        fetch(`${SERVER_URL}/employee/${selectedEmployee/*ID*/}/task`, {
+        fetch(`${SERVER_URL}/employees/${selectedEmployee/*ID*/}/task`, {
             headers: {
                 Authorization: `bearer ${getUserToken()}`,
             },
@@ -51,19 +51,27 @@ function TaskTable() {
                 ))}
             </Select>
         </div>
-        <Typography variant="h5">Tasks:</Typography>
-        {selectedEmployee && (<DataGrid
-            columns={[
-                { field: 'id', headerName: 'ID' },
-                { field: 'usd_amount', headerName: 'USD Amount' },
-                { field: 'lbp_amount', headerName: 'LBP Amount' },
-                { field: 'usd_to_lbp', headerName: 'Trans Type' },
-                { field: 'added_date', headerName: 'Date' },
-                { field: 'user_id', headerName: 'MyID' }
-            ]}
-            rows={tasks}
-            autoHeight
-        />)}
+        <Table  aria-label="simple table">
+        <TableHead>
+          <TableRow>
+            <TableCell>Task</TableCell>
+            <TableCell align="right">Last Commit</TableCell>
+            <TableCell align="right">Progress</TableCell>
+            <TableCell align="right">Deadline</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+         
+            <TableRow key={tasks["task_name"]}>
+
+              <TableCell align="right">{tasks["task_name"]}</TableCell>
+              <TableCell align="right">{tasks["task_commit"]}</TableCell>
+              <TableCell align="right">{tasks["task_percentage"]}</TableCell>
+              <TableCell align="right">{tasks["task_deadline"]}</TableCell>
+            </TableRow>
+      
+        </TableBody>
+      </Table>
     </div>  
     )
 }
