@@ -20,7 +20,7 @@ function TaskTable() {
     };
 
     const fetchEmployeeTasks = useCallback(() => {
-        fetch(`${SERVER_URL}/employee/${selectedEmployee/*ID*/}/task`, {
+        fetch(`${SERVER_URL}/employees/${selectedEmployee/*ID*/}/task`, {
             headers: {
                 Authorization: `bearer ${getUserToken()}`,
             },

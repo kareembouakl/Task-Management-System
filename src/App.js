@@ -8,6 +8,7 @@ import AddEmployeeForm from './components/AddEmployeeForm';
 import AssignTaskToEmployee from './components/AssignTaskToEmployee';
 import TaskTable from './components/TaskTable';
 import ProgressReport from './components/ProgressReport';
+import TrackProgress from './components/TrackProgress';
 
 const SERVER_URL = "http://127.0.0.1:5000";
 
@@ -22,7 +23,7 @@ function App() {
           <Route path='/addemp' element={<AddEmployeeForm/>} />
           <Route path='/addtask' element={<AddTaskForm/>} />
           <Route path='/assigntask' element={<AssignTaskToEmployee/>} />
-          <Route path='/taskprogress' element={<TaskTable/>} />
+          <Route path='/taskprogress' element={<TrackProgress/>} />
           <Route path='/progressreport' element={<ProgressReport/>} />
 
         </Routes>
