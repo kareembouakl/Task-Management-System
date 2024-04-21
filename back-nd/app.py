@@ -7,6 +7,7 @@ from flask_bcrypt import Bcrypt
 from flask_migrate import Migrate
 
 
+
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:password@localhost:3306/exchange'
 db = SQLAlchemy(app)
@@ -15,9 +16,9 @@ bcrypt = Bcrypt(app)
 CORS(app)
 migrate = Migrate(app, db)
 
-from employee import Employee, employees_schema,employee_schema
-from task import Task, task_schema,tasks_schema
-from TaskAssignment import TaskAssignment,taskassignment_schema,taskassignments_schema
+from .model.employee import Employee, employees_schema,employee_schema
+from .model.task import Task, task_schema,tasks_schema
+from .model.TaskAssignment import TaskAssignment,taskassignment_schema,taskassignments_schema
 
 SECRET_KEY = "b'|\xe7\xbfU3`\xc4\xec\xa7\xa9zf:}\xb5\xc7\xb9\x139^3@Dv'"
 
@@ -64,12 +65,10 @@ def delete_employee(id):
 
 
 
-
 @app.route('/tasks', methods=['GET'])
 def get_all_tasks():
     all_tasks = Task.query.all()
     return jsonify(tasks_schema.dump(all_tasks))
-
 
 @app.route('/tasks', methods=['POST'])
 def create_task():
@@ -159,8 +158,6 @@ def update_task_completion(assignment_id):
     db.session.commit()
 
     return jsonify({'message': 'Task completion updated successfully'}), 200
-
-
 
 @app.route('/auto_assign_task', methods=['POST'])
 def auto_assign_task():

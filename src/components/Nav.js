@@ -14,6 +14,7 @@ import { Link } from 'react-router-dom';
 
 import UserCredentialsDialog from '../UserCredentialsDialog/UserCredentialsDialog'
 import { getUserToken, saveUserToken, clearUserToken } from "../localStorage"
+import Inbox from './Inbox';
 //import SERVER_URL from '../App'
 const SERVER_URL = "http://127.0.0.1:5000";
 
@@ -112,30 +113,8 @@ const Nav = () => {
       </AppBar>
     </div>
 
+    <Inbox/>
 
-    <UserCredentialsDialog
-        open={authState === States.USER_CREATION}
-        onSubmit={createUser}
-        onClose={() => {setAuthState(States.PENDING);}}
-        title="Register"
-        submitText="Register"
-    />
-    <UserCredentialsDialog
-        open={authState === States.USER_LOG_IN}
-        onSubmit={login}
-        onClose={() => {setAuthState(States.PENDING);}}
-        title="Login"
-        submitText="Login"
-    />
-    <Snackbar
-        elevation={6}
-        variant="filled"
-        open={authState === States.USER_AUTHENTICATED}
-        autoHideDuration={2000}
-        onClose={() => setAuthState(States.PENDING)}
-    >
-        <Alert severity="success">Success</Alert>
-    </Snackbar>
     </div>
   );
             

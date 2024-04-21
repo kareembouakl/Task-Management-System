@@ -75,7 +75,7 @@ const TrackProgress = () => {
       <Nav/>
 
 
-  <div style={{width:'100%',height:'90%',display:'flex',flexDirection:'column',alignItems:'center',marginTop:'5%'}}>
+  <div style={{width:'100%',height:'90%',display:'flex',flexDirection:'column',alignItems:'center',marginTop:'1%'}}>
   <h2>Task Progress Tracker</h2>
   {employees.map(employee => (
     <div id='people' key={employee.id}>
