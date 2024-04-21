@@ -1,47 +1,83 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import './Inbox.css'; // Import CSS file for sidebar styles
-
+import { Box,Drawer,Stack, Button, TextField, Typography, Alert } from '@mui/material';
 const Inbox = () => {
   const [showSidebar, setShowSidebar] = useState(false);
   const [notifications, setNotifications] = useState([]);
+  const SERVER_URL = "http://127.0.0.1:5000";
 
   const toggleSidebar = () => {
     setShowSidebar(!showSidebar);
-    // Fetch notifications when the sidebar is opened
-    if (!showSidebar) {
-      fetchNotifications();
-    }
+   
+    fetchNotifications();
   };
 
   const fetchNotifications = async () => {
-    // try {
-    //   // Fetch notifications from backend
-    //   const response = await fetch('backend_endpoint_for_notifications');
-    //   const data = await response.json();
-    //   setNotifications(data);
-    // } catch (error) {
-    //   console.error('Error fetching notifications:', error);
-    // }
+    try {
+        const requestOptions = {
+            method: 'POST', 
+            headers: {
+              'Content-Type': 'application/json'
+          
+            },
+            body: JSON.stringify({ 
+              subject: 'Your subject here',
+              message_content: 'Your message content here'
+      
+            })
+          };
+      const r = await fetch(`${SERVER_URL}/messages`,requestOptions);
+
+      const response = await fetch(`${SERVER_URL}/messages`);
+      const data = await response.json();
+  
+      // Filter out duplicate messages based on message ID
+      const uniqueNotifications = data.filter((notification, index, self) =>
+        index === self.findIndex((t) => (
+          t.message_content=== notification.message_content
+        ))
+      );
+  
+      setNotifications(uniqueNotifications);
+    } catch (error) {
+      console.error('Error fetching notifications:', error);
+    }
   };
+
+
+
 
   return (
     <div>
-    <div className={`inbox-container ${showSidebar ? 'sidebar-open' : ''}`}>
+    
       {!showSidebar && <button class='sidebar-toggle-btn' onClick={toggleSidebar}>N</button>}
-      <div className={`sidebar ${showSidebar ? 'show' : 'hide'}`}>
-        <div style={{backgroundColor:'teal',display:'flex',flexDirection:'row',justifyContent:'space-between',margin:'0', padding:'5%'}}>
-        <h2 style={{color:'white',backgroundColor:'teal',margin:'0', padding:'5%'}}>Notifications</h2>
-        <button onClick={()=>{setShowSidebar(false)}} style={{backgroundColor:'white',color:'black',height:'50px'}}>Close</button>
+      <Drawer
+          anchor="left"
+          open={showSidebar}
+          onClose={toggleSidebar}
+        >
+          <Stack
+            direction="column"
+            justifyContent="space-between"
+         
+            sx={{ width: 350 }}
+          >
+            <Box>
+            <Typography variant="h6" style={{ color: 'white', backgroundColor: 'teal', margin: '0',padding: '5%' }}>Notifications</Typography>
+            </Box>
+            <Stack spacing={0}>
+            
+              {notifications.map((notification, index) => (
+                <Box sx={{backgroundColor:'gray',padding:'5%',borderBottom:'black 1px solid'}}>
+                <Typography >{notification.subject}</Typography>
+                <Typography key={index}>{notification.message_content}</Typography>
+                </Box>
+              ))}
+            </Stack>
+          </Stack>
+        </Drawer>
+      </div>
 
-        </div>
-        <ul>
-          {notifications.map((notification, index) => (
-            <li key={index}>{notification}</li>
-          ))}
-        </ul>
-      </div>
-      </div>
-    </div>
   );
 };
 

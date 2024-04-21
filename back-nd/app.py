@@ -5,7 +5,7 @@ from datetime import datetime
 from flask_marshmallow import Marshmallow
 from flask_bcrypt import Bcrypt
 from flask_migrate import Migrate
-
+from sqlalchemy import and_
 
 
 app = Flask(__name__)
@@ -20,7 +20,7 @@ from .model.employee import Employee, employees_schema,employee_schema
 from .model.task import Task, task_schema,tasks_schema
 from .model.TaskAssignment import TaskAssignment,taskassignment_schema,taskassignments_schema
 
-SECRET_KEY = "b'|\xe7\xbfU3`\xc4\xec\xa7\xa9zf:}\xb5\xc7\xb9\x139^3@Dv'"
+from .model.inbox import Inbox
 
 SECRET_KEY = "b'|\xe7\xbfU3`\xc4\xec\xa7\xa9zf:}\xb5\xc7\xb9\x139^3@Dv'"
 
@@ -90,8 +90,7 @@ def get_employee_tasks(employee_id):
     # Find all task assignments for the given employee ID
     task_assignments = TaskAssignment.query.filter_by(employee_id=employee_id).all()
 
-    if not task_assignments:
-        return jsonify({'message': 'No tasks found for this employee'}), 404
+
 
     # Prepare the response data including task details and completion/assigned percentages
     response_data = []
@@ -186,3 +185,51 @@ def auto_assign_task():
 
     db.session.commit()
     return jsonify({'message': 'Task auto-assigned successfully'}), 201
+
+
+@app.route('/messages', methods=['GET'])
+def get_all_messages():
+    messages = Inbox.query.all()
+    message_list = [{
+        'message_id': message.message_id,
+        'subject': message.subject,
+        'message_content': message.message_content,
+        'date_added': message.date_added
+    } for message in messages]
+    return jsonify(message_list)
+
+
+
+@app.route('/messages', methods=['POST'])
+def post_message():
+    print('called')
+    if not request.json or 'subject' not in request.json or 'message_content' not in request.json:
+        return jsonify({'error': 'Missing subject or message content'}), 400
+    
+    subject = request.json['subject']
+    message_content = request.json['message_content']
+    
+    # Check if a message with the same subject and content already exists
+    existing_message = Inbox.query.filter(and_(Inbox.subject == subject, Inbox.message_content == message_content)).first()
+    if existing_message:
+        return jsonify({'message': 'Similar message already exists'}), 409  # Conflict status code
+    
+    employees_with_few_days_off = Employee.query.filter(Employee.days_off < 5).all()
+    if employees_with_few_days_off:
+        subject = "Alert: Employees with Few Days Off"
+        message_content = "The following employees have fewer than 5 days off:\n"
+        for employee in employees_with_few_days_off:
+            message_content += f"- {employee.name}\n"
+        new_message = Inbox(subject=subject, message_content=message_content)
+        db.session.add(new_message)
+    
+    total_salary = db.session.query(db.func.sum(Employee.salary)).scalar()
+    if total_salary and total_salary > 100000:
+        subject = "Alert: Total Salary Exceeds 100,000"
+        message_content = f"The total salary of all employees exceeds 100,000. Total Salary: {total_salary}"
+        new_message = Inbox(subject=subject, message_content=message_content)
+        db.session.add(new_message)
+    
+    db.session.commit()
+
+    return jsonify({'message': 'Message(s) added successfully'}), 201
