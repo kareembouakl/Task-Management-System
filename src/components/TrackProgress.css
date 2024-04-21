@@ -1,0 +1,30 @@
+/* Style for table headers */
+
+
+
+#people
+{
+    margin-top: 4%;
+}
+table th {
+    background-color: teal;
+    color: white;
+    text-align: center;
+    padding: 10px;
+    border: 1px solid black; /* Add border */
+  }
+  
+  /* Style for table cells */
+  table td {
+    text-align: center;
+    padding: 10px;
+    border: 1px solid black; /* Add border */
+  }
+  
+  /* Remove default spinner for number input */
+  input[type=number]::-webkit-inner-spin-button,
+  input[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  

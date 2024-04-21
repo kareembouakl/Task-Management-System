@@ -1,4 +1,4 @@
-from ..app import db,ma,bcrypt
+from app import db,ma,bcrypt
 class manager(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     manager_name = db.Column(db.String(30), unique=True)

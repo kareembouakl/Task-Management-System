@@ -75,58 +75,39 @@ const Nav = () => {
       <div>
       <div>
         <AppBar sx={{ backgroundColor: 'teal' }} position="static">
-        <Toolbar sx={{display:'flex',flexDirection:'row',justifyContent:'space-between'}}>
+        <Toolbar sx={{display:'flex',flexDirection:'row'}}>
+          <div style={{width:'20%',display:'flex',flexDirection:'row',justifyContent:'space-around'}}>
           <Link style={{textDecoration: 'none', color:'white'}} to='/'>
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             Task Manager
           </Typography>
           </Link>
-          <div>
-            <IconButton
-              size="large"
-              aria-label="account of current user"
-              aria-controls="menu-appbar"
-              aria-haspopup="true"
-              color="inherit"
-            >
-              {/* Add an icon here */}
-            </IconButton>
-            <Menu
-              id="menu-appbar"
-            
-             
-              anchorOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-              }}
-              transformOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-              }}
-            >
-              <MenuItem >Profile</MenuItem>
-              <MenuItem >My account</MenuItem>
-            </Menu>
+          </div>
+          <div style={{width:'60%',display:'flex',flexDirection:'row',justifyContent:'space-around'}}>
+          <Link style={{textDecoration: 'none', color:'white'}} to='/addemp'>
+          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+            Add Employee
+          </Typography>
+          </Link>
+          <Link style={{textDecoration: 'none', color:'white'}} to='/addtask'>
+          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+            Add Task
+          </Typography>
+          </Link>
+          <Link style={{textDecoration: 'none', color:'white'}} to='/assigntask'>
+          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+            Assign Task
+          </Typography>
+          </Link>
+
+          <Link style={{textDecoration: 'none', color:'white'}} to='/taskprogress'>
+          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+            Track Task Progress
+          </Typography>
+          </Link>
           </div>
 
-          <Box sx={{width:'200px',display:'flex',flexDirection:'row',justifyContent:'space-around',pr:'0'}}>
-            {userToken ? (
-            <Button 
-              sx={{backgroundColor:'whitesmoke',color:'black'}} 
-              onClick={logout}
-            >Logout</Button>
-                      ) : ( <>
-            <Button 
-              sx={{backgroundColor:'whitesmoke',color:'black'}}
-              onClick={() => setAuthState(States.USER_CREATION)}
-            >Register</Button>
-            <Button 
-              sx={{backgroundColor:'whitesmoke',color:'black'}}
-              onClick={() => setAuthState(States.USER_LOG_IN)}
-            >Login</Button> </>
-                      )}
-
-          </Box>
+         
         </Toolbar>
       </AppBar>
     </div>

@@ -77,7 +77,7 @@ function AddEmployeeForm() {
                     <Alert key={index} severity="error">{error}</Alert>
                 ))}
                 <form onSubmit={addEmployee} style={{height: '700px', width: '600px', display: 'flex', flexDirection: 'column', justifyContent: 'space-around', padding: '20px', border: '2px solid black', borderRadius: '10px'}}>
-                    <TextField fullWidth label="Name" name="name" value={formData.name} onChange={handleChange} />
+                    <TextField fullWidth label="Name" name="name" type='text' value={formData.name} onChange={handleChange} />
                     <TextField fullWidth label="Salary" name="salary" type="number" value={formData.salary} onChange={handleChange} />
                     <TextField fullWidth label="Address" name="address" value={formData.address} onChange={handleChange} />
                     <TextField fullWidth label="Skills (comma-separated)" name="skills" value={formData.skills} onChange={handleChange} />
