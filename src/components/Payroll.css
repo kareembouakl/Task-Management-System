@@ -1,0 +1,29 @@
+body {
+    font-family: Arial, sans-serif;
+    text-align: center; /* Center align all text */
+  }
+  
+  .container {
+    max-width: 800px;
+    margin: 0 auto; /* Center the container horizontally */
+  }
+  
+  .teal-bg {
+    background-color: teal; /* Teal background color */
+  }
+  
+  .border {
+    border: 1px solid black; /* Black border */
+  }
+  
+  /* Center align text within table cells */
+  table {
+    width: 600px;
+
+  }
+  
+  table th, table td {
+    text-align: center;
+    padding: 8px;
+  }
+  

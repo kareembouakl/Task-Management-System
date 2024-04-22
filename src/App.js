@@ -10,6 +10,7 @@ import TaskTable from './components/TaskTable';
 import TrackProgress from './components/TrackProgress';
 import SkillMatching from './components/SkillMatching';
 import Carpooling from './components/Carpooling';
+import Payroll from './components/Payroll';
 
 const SERVER_URL = "http://127.0.0.1:5000";
 
@@ -26,6 +27,7 @@ function App() {
           <Route path='/assigntask' element={<AssignTaskToEmployee/>} />
           <Route path='/taskprogress' element={<TrackProgress/>} />
           <Route path='/skillmatching' element={<SkillMatching/>} />
+          <Route path='/payroll' element={<Payroll/>} />
           <Route path='/carpooling' element={<Carpooling/>} />
         </Routes>
       </Router>

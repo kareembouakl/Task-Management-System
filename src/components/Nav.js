@@ -59,7 +59,8 @@ const Nav = () => {
       { name: "Assign Task", path: "/assigntask" },
       { name: "Track Task Progress", path: "/taskprogress" },
       { name: "Task Matching", path: "/skillmatching" },
-      { name: "Carpooling", path: "/carpooling" }
+      { name: "Carpooling", path: "/carpooling" },
+      { name: "Payroll", path: "/payroll" }
   ];
 
     return (
