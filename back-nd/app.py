@@ -304,8 +304,10 @@ def send_mail():
     else:
         return jsonify({"error": "Failed to send email", "details": response.text}), response.status_code
     
-@app.route('/employees/payroll', methods=['GET'])
+@app.route('/payroll', methods=['GET'])
 def get_employee_payroll():
     employees = Employee.query.with_entities(Employee.name, Employee.salary).all()
     payroll_data = [{'name': emp.name, 'salary': emp.salary} for emp in employees]
     return jsonify(payroll_data)
+
+

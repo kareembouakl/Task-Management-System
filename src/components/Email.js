@@ -4,7 +4,7 @@ import Nav from './Nav'; // Assuming Nav is your navigation component
 
 const SERVER_URL = "http://127.0.0.1:5000";
 
-function EmailForm() {
+function Email() {
     const [formData, setFormData] = useState({
         subject: '',
         recipient: '',
@@ -90,4 +90,4 @@ function EmailForm() {
     );
 }
 
-export default EmailForm;
+export default Email;

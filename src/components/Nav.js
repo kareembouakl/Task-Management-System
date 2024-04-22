@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { AppBar, Toolbar, Typography, Button, Box, Snackbar, Alert } from '@mui/material';
 import { Link as RouterLink } from 'react-router-dom';
+import MailIcon from '@mui/icons-material/Mail'; // Import MailIcon
 import Inbox from './Inbox';
 import UserCredentialsDialog from '../UserCredentialsDialog/UserCredentialsDialog';
 
@@ -45,9 +46,6 @@ const Nav = () => {
             }
             return response.json();
         })
-        .then((body) => {
-            // Handle response body if needed
-        })
         .catch((error) => {
             console.error('Error during login:', error);
         });
@@ -59,7 +57,8 @@ const Nav = () => {
       { name: "Assign Task", path: "/assigntask" },
       { name: "Track Task Progress", path: "/taskprogress" },
       { name: "Task Matching", path: "/skillmatching" },
-      { name: "Carpooling", path: "/carpooling" }
+      { name: "Carpooling", path: "/carpooling" },
+      { name: "Payroll", path: "/payroll" }
   ];
 
     return (
@@ -74,17 +73,23 @@ const Nav = () => {
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
                         {isLoggedIn && (
                             <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                                 {menuItems.map((item, index) => (
-                                <Button 
-                                    key={index} 
-                                    component={RouterLink} 
-                                    to={item.path}
-                                    sx={{ color: 'white', marginRight: 4 }}
-                                    
+                                {menuItems.map((item, index) => (
+                                    <Button 
+                                        key={index} 
+                                        component={RouterLink} 
+                                        to={item.path}
+                                        sx={{ color: 'white', marginRight: 4 }}
+                                    >
+                                        {item.name}
+                                    </Button>
+                                ))}
+                                <Button
+                                    component={RouterLink}
+                                    to="/email"
+                                    sx={{ color: 'white' }}
                                 >
-                                    {item.name}
+                                    <MailIcon />
                                 </Button>
-                            ))}
                             </Box>
                         )}
                         {!isLoggedIn && (
@@ -92,7 +97,6 @@ const Nav = () => {
                                 Login
                             </Button>
                         )}
-
                         {isLoggedIn && (
                             <Button
                                 onClick={() => {
