@@ -12,7 +12,7 @@ import SkillMatching from './components/SkillMatching';
 import Carpooling from './components/Carpooling';
 import Payroll from './components/Payroll';
 import Email from './components/Email';
-import Payroll from './components/Payroll';
+import Inbox from './components/Inbox';
 
 const SERVER_URL = "http://127.0.0.1:5000";
 
