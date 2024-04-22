@@ -6,10 +6,12 @@ from flask_marshmallow import Marshmallow
 from flask_bcrypt import Bcrypt
 from flask_migrate import Migrate
 from sqlalchemy import and_
-
+from .db_config import DB_CONFIG
+import requests
+import re
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:password@localhost:3306/exchange'
+app.config['SQLALCHEMY_DATABASE_URI'] = DB_CONFIG
 db = SQLAlchemy(app)
 ma = Marshmallow(app)
 bcrypt = Bcrypt(app)
@@ -23,13 +25,37 @@ from .model.TaskAssignment import TaskAssignment,taskassignment_schema,taskassig
 from .model.inbox import Inbox
 
 SECRET_KEY = "b'|\xe7\xbfU3`\xc4\xec\xa7\xa9zf:}\xb5\xc7\xb9\x139^3@Dv'"
+MAILGUN_API_KEY = '8e9ffcdc379e599d43efd143bb5c5fab-2175ccc2-d48d9cf1'
+MAILGUN_DOMAIN = 'sandbox9b16936d482a430d84d82709e8c43122.mailgun.org'
+MAILGUN_API_URL = f'https://api.mailgun.net/v3/{MAILGUN_DOMAIN}/messages'
 
 @app.route('/employees', methods=['POST'])
 def add_employee():
     data = request.get_json()
-    employee = Employee(name=data['name'], salary=data['salary'], days_off=data['days_off'], address=data['address'], skills=data['skills'])
-    db.session.add(employee)
-    db.session.commit()
+
+    # Validate email
+    if 'email' in data:
+        if not re.match(r"[^@]+@[^@]+\.[^@]+", data['email']):
+            return jsonify({"error": "Invalid email format"}), 400
+
+    # Create a new Employee instance
+    employee = Employee(
+        name=data['name'],
+        salary=data['salary'],
+        days_off=data['days_off'],
+        address=data['address'],
+        phone_number=data.get('phone_number'),  # Use .get for optional fields
+        email=data.get('email'),
+        department=data.get('department'),
+        date_of_birth=data.get('date_of_birth'),  # Directly assign the string
+        skills=data['skills']
+    )
+
+    # Add to the database and commit
+    db.session.add(employee);
+    db.session.commit();
+
+    # Return the newly created employee
     return jsonify(employee_schema.dump(employee)), 201
 
 @app.route('/employees/<int:id>', methods=['GET'])
@@ -233,3 +259,39 @@ def post_message():
     db.session.commit()
 
     return jsonify({'message': 'Message(s) added successfully'}), 201
+
+def send_email(subject, recipient, content):
+    """Send an email using the Mailgun API."""
+    return requests.post(
+        MAILGUN_API_URL,
+        auth=("api", MAILGUN_API_KEY),
+        data={
+            "from": f"Manager <manager@{MAILGUN_DOMAIN}>",
+            "to": [recipient],
+            "subject": subject,
+            "text": content
+        }
+    )
+
+@app.route('/send-mail', methods=['POST'])
+def send_mail():
+    """API endpoint to send emails. Expects JSON input with subject, recipient, and content."""
+    data = request.get_json()
+    if not data or not all(k in data for k in ('subject', 'recipient', 'content')):
+        return jsonify({"error": "Missing data, please provide subject, recipient, and content"}), 400
+
+    subject = data['subject']
+    recipient = data['recipient']
+    content = data['content']
+    
+    response = send_email(subject, recipient, content)
+    if response.status_code == 200:
+        return jsonify({"message": "Email sent successfully!"}), 200
+    else:
+        return jsonify({"error": "Failed to send email", "details": response.text}), response.status_code
+    
+@app.route('/employees/payroll', methods=['GET'])
+def get_employee_payroll():
+    employees = Employee.query.with_entities(Employee.name, Employee.salary).all()
+    payroll_data = [{'name': emp.name, 'salary': emp.salary} for emp in employees]
+    return jsonify(payroll_data)

@@ -10,6 +10,7 @@ import TaskTable from './components/TaskTable';
 import TrackProgress from './components/TrackProgress';
 import SkillMatching from './components/SkillMatching';
 import Carpooling from './components/Carpooling';
+import Inbox from './components/Inbox';
 
 const SERVER_URL = "http://127.0.0.1:5000";
 
@@ -24,10 +25,10 @@ function App() {
           <Route path='/addemp' element={<AddEmployeeForm/>} />
           <Route path='/addtask' element={<AddTaskForm/>} />
           <Route path='/assigntask' element={<AssignTaskToEmployee/>} />
-          <Route path='/taskprogress' element={<TaskTable/>} />
-          <Route path='/progressreport' element={<TrackProgress/>} />
+          <Route path='/taskprogress' element={<TrackProgress/>} />
           <Route path='/skillmatching' element={<SkillMatching/>} />
           <Route path='/carpooling' element={<Carpooling/>} />
+          <Route path='/inbox' element={<Inbox/>} />
         </Routes>
       </Router>
 

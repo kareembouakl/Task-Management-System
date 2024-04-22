@@ -1,6 +1,7 @@
 import React from 'react';
 import { AppBar, Toolbar, Typography, Button, Box, IconButton, useMediaQuery, useTheme } from '@mui/material';
 import { Link as RouterLink } from 'react-router-dom';
+import Inbox from './Inbox';
 
 const Nav = () => {
     const theme = useTheme();
@@ -36,7 +37,7 @@ const Nav = () => {
                             ))}
                         </Box>
                     </Box>
-                
+                <Inbox/>
             </Toolbar>
         </AppBar>
     );
