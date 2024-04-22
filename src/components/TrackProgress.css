@@ -1,4 +1,11 @@
 /* Style for table headers */
+
+
+
+#people
+{
+    margin-top: 4%;
+}
 table th {
     background-color: teal;
     color: white;

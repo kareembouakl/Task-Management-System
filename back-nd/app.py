@@ -29,6 +29,20 @@ MAILGUN_API_KEY = '8e9ffcdc379e599d43efd143bb5c5fab-2175ccc2-d48d9cf1'
 MAILGUN_DOMAIN = 'sandbox9b16936d482a430d84d82709e8c43122.mailgun.org'
 MAILGUN_API_URL = f'https://api.mailgun.net/v3/{MAILGUN_DOMAIN}/messages'
 
+@app.route('/manager', methods=['POST'])
+def login():
+    user_name = request.json.get('user_name')
+    password = request.json.get('password')
+
+    if not user_name or not password:
+        return jsonify({"message": "Missing Username or Password"}), 403
+
+    if user_name not in ['Eric', 'Yehya', 'Kareem'] or password != 'manager123':
+        return jsonify({"message": "Invalid username or password"}), 403
+    else:
+        # Allow access or perform other actions
+        return jsonify({"message": "User authenticated successfully"}), 200
+
 @app.route('/employees', methods=['POST'])
 def add_employee():
     data = request.get_json()
