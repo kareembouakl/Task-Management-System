@@ -11,4 +11,5 @@ class taskSchema(ma.Schema):
     class Meta:
         fields = ("id","title","skills_required")
         model = Task
+task_schema = taskSchema()
 tasks_schema = taskSchema(many=True)

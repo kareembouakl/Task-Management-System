@@ -66,26 +66,70 @@ function AddEmployeeForm() {
             ...prevFormData,
             [name]: value,
         }));
-    };
+        console.log(formData);
+      };
+    
 
-    return (
-        <div>
-            <Nav/>
-            <Box sx={{width: '800px', height: '1000px', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
-                <Typography variant="h6">Add Employee</Typography>
-                {errors.map((error, index) => (
-                    <Alert key={index} severity="error">{error}</Alert>
-                ))}
-                <form onSubmit={addEmployee} style={{height: '700px', width: '600px', display: 'flex', flexDirection: 'column', justifyContent: 'space-around', padding: '20px', border: '2px solid black', borderRadius: '10px'}}>
-                    <TextField fullWidth label="Name" name="name" value={formData.name} onChange={handleChange} />
-                    <TextField fullWidth label="Salary" name="salary" type="number" value={formData.salary} onChange={handleChange} />
-                    <TextField fullWidth label="Address" name="address" value={formData.address} onChange={handleChange} />
-                    <TextField fullWidth label="Skills (comma-separated)" name="skills" value={formData.skills} onChange={handleChange} />
-                    <Button variant="contained" color="primary" type="submit">Submit</Button>
-                </form>
+
+  return(
+    <div>
+      <Nav/>
+      <Box sx={{display:'flex',flexDirection:'row',justifyContent:'center'}}>
+      <Box sx={{width:'600px',height:'1000px',display:'flex',flexDirection:'column',justifyContent:'center',alignItems:'center'}}>
+        <Typography>Add Employee</Typography>
+      <form style={{height:'700px',width:'600px',display:'flex',flexDirection:'column',justifyContent:'space-around',padding:'20px',border:'2px solid black',borderRadius:'10px'}}  onSubmit={addEmployee}>
+     
+
+            <Box sx={{height:'100px',display:'flex',flexDirection:'column',justifyContent:'space-around'}}>
+
+            <TextField
+              fullWidth
+              label="Name"
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
+            />
             </Box>
-        </div>
-    );
+        
+            <Box sx={{height:'100px',display:'flex',flexDirection:'column',justifyContent:'space-around'}}>
+            <TextField
+              fullWidth
+              label="Phone Number"
+              name="phoneNumber"
+              value={formData.phoneNumber}
+              onChange={handleChange}
+            />
+            </Box>
+
+            <Box sx={{height:'100px',display:'flex',flexDirection:'column',justifyContent:'space-around'}}>
+            <TextField
+              fullWidth
+              label="Address"
+              name="address"
+              value={formData.address}
+              onChange={handleChange}
+            />
+            </Box>
+
+            <Box sx={{height:'100px',display:'flex',flexDirection:'column',justifyContent:'space-around'}}>
+            <TextField
+              fullWidth
+              label="Department"
+              name="department"
+              value={formData.department}
+              onChange={handleChange}
+            />
+            </Box>
+         
+            <Button style={{width:'80px',padding:'8px'}} variant="contained" color="primary" type="submit">
+              Submit
+            </Button>
+
+      </form>
+      </Box>
+      </Box>
+    </div>
+  );
 }
 
 export default AddEmployeeForm;

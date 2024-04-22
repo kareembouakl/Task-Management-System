@@ -20,8 +20,8 @@ function AssignTaskToEmployee() {
                 const taskRes = await fetch(`${SERVER_URL}/tasks`);
                 const empData = await empRes.json();
                 const taskData = await taskRes.json();
-                console.log('Employees:', empData); // Debug: Log the employees data
-                console.log('Tasks:', taskData);    // Debug: Log the tasks data
+                console.log('Employees:', empData); 
+                console.log('Tasks:', taskData);   
                 setEmployees(empData);
                 setTasks(taskData);
             } catch (error) {

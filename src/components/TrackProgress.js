@@ -12,6 +12,7 @@ const TrackProgress = () => {
     fetchEmployees();
   }, []);
 
+
   const fetchEmployees = async () => {
     try {
       const response = await fetch(`${SERVER_URL}/employees`);
@@ -30,7 +31,10 @@ const TrackProgress = () => {
       try {
         const response = await fetch(`${SERVER_URL}/employee_tasks/${employee.id}`);
         const taskAssignments = await response.json();
-        tasksByEmployee[employee.id] = taskAssignments;
+        if (taskAssignments)
+        {
+          tasksByEmployee[employee.id] = taskAssignments}
+        ;
       } catch (error) {
         console.error(`Error fetching tasks for employee ${employee.id}:`, error);
       }
@@ -75,10 +79,10 @@ const TrackProgress = () => {
       <Nav/>
 
 
-  <div style={{width:'100%',height:'90%',display:'flex',flexDirection:'column',alignItems:'center',marginTop:'5%'}}>
+  <div style={{width:'100%',height:'90%',display:'flex',flexDirection:'column',alignItems:'center',marginTop:'1%'}}>
   <h2>Task Progress Tracker</h2>
   {employees.map(employee => (
-    <div key={employee.id}>
+    true && <div id='people' key={employee.id}>
       <h3>{employee.name}</h3>
       <table>
         <thead>

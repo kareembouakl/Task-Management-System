@@ -65,7 +65,8 @@ function AddTaskForm() {
     return (
         <div>
             <Nav/>
-            <Box sx={{ width: '800px', height: '1000px', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+            <Box sx={{display:'flex',flexDirection:'row',justifyContent:'center'}}>
+            <Box sx={{ width: '600px', height: '1000px', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
                 <Typography variant="h6">Add Task</Typography>
                 {errors.map((error, index) => (
                     <Alert key={index} severity="error">{error}</Alert>
@@ -77,6 +78,7 @@ function AddTaskForm() {
                         Submit
                     </Button>
                 </form>
+            </Box>
             </Box>
         </div>
     );
