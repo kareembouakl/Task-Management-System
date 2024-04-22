@@ -24,6 +24,20 @@ from .model.inbox import Inbox
 
 SECRET_KEY = "b'|\xe7\xbfU3`\xc4\xec\xa7\xa9zf:}\xb5\xc7\xb9\x139^3@Dv'"
 
+@app.route('/manager', methods=['POST'])
+def login():
+    user_name = request.json.get('user_name')
+    password = request.json.get('password')
+
+    if not user_name or not password:
+        return jsonify({"message": "Missing Username or Password"}), 403
+
+    if user_name not in ['Eric', 'Yehya', 'Kareem'] or password != 'manager123':
+        return jsonify({"message": "Invalid username or password"}), 403
+    else:
+        # Allow access or perform other actions
+        return jsonify({"message": "User authenticated successfully"}), 200
+
 @app.route('/employees', methods=['POST'])
 def add_employee():
     data = request.get_json()

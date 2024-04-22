@@ -1,6 +1,13 @@
 /* Style for table headers */
+
+
+
+#people
+{
+    margin-top: 4%;
+}
 table th {
-    background-color: green;
+    background-color: teal;
     color: white;
     text-align: center;
     padding: 10px;

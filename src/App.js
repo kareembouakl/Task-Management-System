@@ -24,8 +24,7 @@ function App() {
           <Route path='/addemp' element={<AddEmployeeForm/>} />
           <Route path='/addtask' element={<AddTaskForm/>} />
           <Route path='/assigntask' element={<AssignTaskToEmployee/>} />
-          <Route path='/taskprogress' element={<TaskTable/>} />
-          <Route path='/progressreport' element={<TrackProgress/>} />
+          <Route path='/taskprogress' element={<TrackProgress/>} />
           <Route path='/skillmatching' element={<SkillMatching/>} />
           <Route path='/carpooling' element={<Carpooling/>} />
         </Routes>
