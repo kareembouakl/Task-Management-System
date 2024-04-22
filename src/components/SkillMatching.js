@@ -18,35 +18,44 @@ function AutoAssignTasks() {
         try {
             const tasksRes = await fetch(`${SERVER_URL}/tasks`);
             const tasksData = await tasksRes.json();
-            setTasks(tasksData);
-
             const empRes = await fetch(`${SERVER_URL}/employees`);
             const employeesData = await empRes.json();
+
             const employeesWithTasks = await Promise.all(
                 employeesData.map(async emp => {
-                    const tasksRes = await fetch(`${SERVER_URL}/employees/${emp.id}/tasks`);
+                    const tasksRes = await fetch(`${SERVER_URL}/employee_tasks/${emp.id}`);
                     const tasks = await tasksRes.json();
                     return { ...emp, tasks };
                 })
             );
+
+            setTasks(tasksData);
             setEmployees(employeesWithTasks);
+            console.log("Tasks loaded:", tasksData);
+            console.log("Employees loaded with their tasks:", employeesWithTasks);
         } catch (error) {
+            console.error('Failed to fetch data:', error);
             setError('Failed to fetch data');
-            console.error(error);
         }
     };
 
     const generateAssignments = () => {
-        // Sort employees by their number of tasks (ascending)
-        const sortedEmployees = employees.sort((a, b) => a.tasks.length - b.tasks.length);
+        let availableTasks = tasks.filter(task => 
+            !employees.some(emp => 
+                emp.tasks.some(t => t.task_id === task.id)));
 
-        const newAssignments = tasks.map(task => {
-            // First try to find an employee with no tasks
-            let matchedEmployee = sortedEmployees.find(emp => emp.tasks.length === 0 && emp.skills.some(skill => task.skills_required.includes(skill)));
+        const sortedEmployees = [...employees].sort((a, b) => a.tasks.length - b.tasks.length);
+
+        const newAssignments = availableTasks.map(task => {
+            let matchedEmployee = sortedEmployees.find(emp => 
+                emp.skills.some(skill => task.skills_required.includes(skill)) && 
+                emp.tasks.every(t => t.task_id !== task.id));
+
             if (!matchedEmployee) {
-                // If no available employee found, try to find any suitable employee
-                matchedEmployee = sortedEmployees.find(emp => emp.skills.some(skill => task.skills_required.includes(skill)));
+                matchedEmployee = sortedEmployees.find(emp => 
+                    emp.skills.some(skill => task.skills_required.includes(skill)));
             }
+
             return {
                 ...task,
                 assignedTo: matchedEmployee ? matchedEmployee.name : "No suitable employee found"

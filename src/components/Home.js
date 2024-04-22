@@ -13,6 +13,7 @@ import Cloud from '@mui/icons-material/Cloud';
 import { Link } from 'react-router-dom';
 
 import Nav from './Nav'
+import Inbox from './Inbox';
 import { getUserToken, saveUserToken, clearUserToken } from "../localStorage"
 import SERVER_URL from '../App'
 
@@ -24,7 +25,6 @@ const Home = () => {
   return (
     <div>
       <Nav/>
-    
       <Box sx={{height:'700px',display:'flex',flexDirection:'column',justifyContent:'center',alignItems:'center'}}>
         <Paper style={{width:'500px'}}>
           <MenuList>

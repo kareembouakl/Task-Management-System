@@ -1,6 +1,8 @@
 import React, { useState,useEffect } from 'react';
 import './Inbox.css'; // Import CSS file for sidebar styles
-import { Box,Drawer,Stack, Button, TextField, Typography, Alert } from '@mui/material';
+import { Box,Drawer,Stack, IconButton, Typography, Alert } from '@mui/material';
+import NotificationsIcon from '@mui/icons-material/Notifications'; // Import the notifications icon
+
 const Inbox = () => {
   const [showSidebar, setShowSidebar] = useState(false);
   const [notifications, setNotifications] = useState([]);
@@ -49,35 +51,37 @@ const Inbox = () => {
 
   return (
     <div>
-    
-      {!showSidebar && <button class='sidebar-toggle-btn' onClick={toggleSidebar}>N</button>}
+      {!showSidebar && (
+        <IconButton onClick={toggleSidebar} className='sidebar-toggle-btn' color="inherit">
+          <NotificationsIcon />
+        </IconButton>
+      )}
       <Drawer
-          anchor="left"
-          open={showSidebar}
-          onClose={toggleSidebar}
+        anchor="left"
+        open={showSidebar}
+        onClose={toggleSidebar}
+      >
+        <Stack
+          direction="column"
+          justifyContent="space-between"
+          sx={{ width: 350 }}
         >
-          <Stack
-            direction="column"
-            justifyContent="space-between"
-         
-            sx={{ width: 350 }}
-          >
-            <Box>
-            <Typography variant="h6" style={{ color: 'white', backgroundColor: 'teal', margin: '0',padding: '5%' }}>Notifications</Typography>
-            </Box>
-            <Stack spacing={0}>
-            
-              {notifications.map((notification, index) => (
-                <Box sx={{backgroundColor:'gray',padding:'5%',borderBottom:'black 1px solid'}}>
-                <Typography >{notification.subject}</Typography>
-                <Typography key={index}>{notification.message_content}</Typography>
-                </Box>
-              ))}
-            </Stack>
+          <Box>
+            <Typography variant="h6" style={{ color: 'white', backgroundColor: 'teal', margin: '0', padding: '5%' }}>
+              Notifications
+            </Typography>
+          </Box>
+          <Stack spacing={0}>
+            {notifications.map((notification, index) => (
+              <Box sx={{ backgroundColor: 'gray', padding: '5%', borderBottom: 'black 1px solid' }} key={index}>
+                <Typography>{notification.subject}</Typography>
+                <Typography>{notification.message_content}</Typography>
+              </Box>
+            ))}
           </Stack>
-        </Drawer>
-      </div>
-
+        </Stack>
+      </Drawer>
+    </div>
   );
 };
 

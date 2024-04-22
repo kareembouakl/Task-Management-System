@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { InputLabel, Select, MenuItem, Box, Button, Typography, TextField, IconButton, Alert } from '@mui/material';
+import { Box, Button, IconButton, InputLabel, MenuItem, Select, TextField, Typography, Alert } from '@mui/material';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
 import Nav from './Nav';
@@ -12,55 +12,82 @@ function AssignTaskToEmployee() {
     const [selectedTask, setSelectedTask] = useState('');
     const [assignments, setAssignments] = useState([]);
     const [error, setError] = useState('');
+    const [availableTasks, setAvailableTasks] = useState([]);
 
     useEffect(() => {
-        const fetchEmployeesAndTasks = async () => {
-            try {
-                const empRes = await fetch(`${SERVER_URL}/employees`);
-                const taskRes = await fetch(`${SERVER_URL}/tasks`);
-                const empData = await empRes.json();
-                const taskData = await taskRes.json();
-                console.log('Employees:', empData); 
-                console.log('Tasks:', taskData);   
-                setEmployees(empData);
-                setTasks(taskData);
-            } catch (error) {
-                setError('Failed to fetch data');
-                console.error(error);
-            }
-        };
         fetchEmployeesAndTasks();
     }, []);
 
+    const fetchEmployeesAndTasks = async () => {
+        try {
+            const taskRes = await fetch(`${SERVER_URL}/tasks`);
+            const taskData = await taskRes.json();
+            console.log('Tasks fetched:', taskData);
+
+            const empRes = await fetch(`${SERVER_URL}/employees`);
+            const empData = await empRes.json();
+            console.log('Employees fetched:', empData);
+
+            const tasksByEmployee = await Promise.all(
+                empData.map(async (employee) => {
+                    const response = await fetch(`${SERVER_URL}/employee_tasks/${employee.id}`);
+                    const data = await response.json();
+                    console.log(`Tasks for employee ${employee.id}:`, data);
+                    return data;
+                })
+            );
+
+            const assignedTaskIds = new Set();
+            tasksByEmployee.flat().forEach(task => assignedTaskIds.add(task.task_id));
+            console.log('Assigned Task IDs:', assignedTaskIds);
+
+            const available = taskData.filter(task => !assignedTaskIds.has(task.id));
+            console.log('Available tasks:', available);
+            setAvailableTasks(available);
+            setEmployees(empData);
+            setTasks(taskData);
+        } catch (error) {
+            console.error('Error fetching data:', error);
+            setError('Failed to fetch data');
+        }
+    };
+
     const handleChangeTask = (event) => {
+        console.log(`Task selected: ${event.target.value}`);
         setSelectedTask(event.target.value);
     };
 
     const handleAddAssignment = () => {
+        console.log('Adding new assignment...');
         setAssignments([...assignments, { employee_id: '', assigned_percentage: 0 }]);
     };
 
     const handleRemoveAssignment = (index) => {
+        console.log(`Removing assignment at index ${index}`);
         const newAssignments = [...assignments];
         newAssignments.splice(index, 1);
         setAssignments(newAssignments);
     };
 
     const handleAssignmentChange = (index, field, value) => {
-        const updatedAssignments = assignments.map((item, i) => {
-            if (i === index) {
-                return { ...item, [field]: value };
-            }
-            return item;
-        });
+        console.log(`Updating assignment at index ${index}, field ${field}, value ${value}`);
+        if (field === 'assigned_percentage') {
+            const totalOtherAssigned = assignments.reduce((acc, curr, idx) => idx === index ? acc : acc + Number(curr.assigned_percentage), 0);
+            const maxAssignable = 100 - totalOtherAssigned;
+            value = value > maxAssignable ? maxAssignable : value;
+        }
+
+        const updatedAssignments = assignments.map((item, i) => i === index ? { ...item, [field]: value } : item);
         setAssignments(updatedAssignments);
     };
 
     const assign = async () => {
         if (!selectedTask || assignments.some(a => !a.employee_id || a.assigned_percentage === 0)) {
+            console.log('Validation failed: task or assignments not properly set.');
             setError('Please select a task and complete all assignment fields');
             return;
         }
+        console.log('Sending assignments to server:', { task_id: selectedTask, assignments });
         try {
             const response = await fetch(`${SERVER_URL}/assign_task`, {
                 method: 'POST',
@@ -76,10 +103,12 @@ function AssignTaskToEmployee() {
             if (!response.ok) {
                 throw new Error(data.message || 'Failed to assign task');
             }
+            console.log('Assignment successful:', data);
             setError('');
             alert('Task assigned successfully!');
             setAssignments([]);
         } catch (error) {
+            console.error('Error during assignment:', error);
             setError(error.message);
         }
     };
@@ -100,7 +129,7 @@ function AssignTaskToEmployee() {
                     onChange={handleChangeTask}
                     sx={{ width: 300, marginBottom: 2 }}
                 >
-                    {tasks.map((task) => (
+                    {availableTasks.map((task) => (
                         <MenuItem key={task.id} value={task.id}>{task.title}</MenuItem>
                     ))}
                 </Select>
@@ -112,14 +141,20 @@ function AssignTaskToEmployee() {
                             sx={{ width: 180, marginRight: 1 }}
                         >
                             {employees.map((emp) => (
-                                <MenuItem key={emp.id} value={emp.id}>{emp.name}</MenuItem>
+                                <MenuItem 
+                                    key={emp.id} 
+                                    value={emp.id}
+                                    disabled={assignments.some(a => a.employee_id === emp.id && index !== assignments.indexOf(a))}
+                                >
+                                    {emp.name}
+                                </MenuItem>
                             ))}
                         </Select>
                         <TextField
                             type="number"
                             InputProps={{ inputProps: { min: 0, max: 100 } }}
                             value={assignment.assigned_percentage}
-                            onChange={(e) => handleAssignmentChange(index, 'assigned_percentage', e.target.value)}
+                            onChange={(e) => handleAssignmentChange(index, 'assigned_percentage', Number(e.target.value))}
                             sx={{ width: 100 }}
                         />
                         <IconButton onClick={() => handleRemoveAssignment(index)}>

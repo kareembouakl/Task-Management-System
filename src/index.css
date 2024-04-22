@@ -11,27 +11,3 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
-
-/* TaskProgress */
-/* Style for table headers */
-table th {
-  background-color: green;
-  color: white;
-  text-align: center;
-  padding: 10px;
-  border: 1px solid black; /* Add border */
-}
-
-/* Style for table cells */
-table td {
-  text-align: center;
-  padding: 10px;
-  border: 1px solid black; /* Add border */
-}
-
-/* Remove default spinner for number input */
-input[type=number]::-webkit-inner-spin-button,
-input[type=number]::-webkit-outer-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
