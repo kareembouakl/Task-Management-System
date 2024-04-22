@@ -10,7 +10,7 @@ import TaskTable from './components/TaskTable';
 import TrackProgress from './components/TrackProgress';
 import SkillMatching from './components/SkillMatching';
 import Carpooling from './components/Carpooling';
-import Inbox from './components/Inbox';
+import Payroll from './components/Payroll';
 import Email from './components/Email';
 import Payroll from './components/Payroll';
 
@@ -28,6 +28,7 @@ function App() {
           <Route path='/assigntask' element={<AssignTaskToEmployee/>} />
           <Route path='/taskprogress' element={<TrackProgress/>} />
           <Route path='/skillmatching' element={<SkillMatching/>} />
+          <Route path='/payroll' element={<Payroll/>} />
           <Route path='/carpooling' element={<Carpooling/>} />
           <Route path='/inbox' element={<Inbox/>} />
           <Route path='/email' element={<Email/>} />

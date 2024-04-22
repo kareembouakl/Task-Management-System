@@ -264,8 +264,8 @@ def post_message():
         db.session.add(new_message)
     
     total_salary = db.session.query(db.func.sum(Employee.salary)).scalar()
-    if total_salary and total_salary > 100000:
-        subject = "Alert: Total Salary Exceeds 100,000"
+    if total_salary and total_salary > 500000:
+        subject = "Alert: Total Salary Exceeds 500,000"
         message_content = f"The total salary of all employees exceeds 100,000. Total Salary: {total_salary}"
         new_message = Inbox(subject=subject, message_content=message_content)
         db.session.add(new_message)
@@ -273,6 +273,14 @@ def post_message():
     db.session.commit()
 
     return jsonify({'message': 'Message(s) added successfully'}), 201
+
+
+
+@app.route('/payroll', methods=['GET'])
+def get_employee_payroll():
+    employees = Employee.query.with_entities(Employee.name, Employee.salary).all()
+    payroll_data = [{'name': emp.name, 'salary': emp.salary} for emp in employees]
+    return jsonify(payroll_data)
 
 def send_email(subject, recipient, content):
     """Send an email using the Mailgun API."""
