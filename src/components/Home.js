@@ -53,9 +53,9 @@ const Home = () => {
             </MenuItem>
             </Link>
 
-            <Link to='/progressreport' style={{textDecoration: 'none', color: 'inherit'}}>
+            <Link to='/skillmatching' style={{textDecoration: 'none', color: 'inherit'}}>
             <MenuItem>
-              <ListItemText>5. Print Employee Report </ListItemText>            
+              <ListItemText>5. Skill Matching </ListItemText>            
             </MenuItem>
             </Link>
   
